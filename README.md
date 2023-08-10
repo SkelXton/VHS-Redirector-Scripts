@@ -1,7 +1,7 @@
 # VHS-Redirector-Scripts
 _Scripts and GUIs to automate VHS Alternative Server. Needs Admin Privileges to run All scripts._
 
-Download the most up to date scripts here: ![Download Now](https://github.com/SkelXton/VHS-Redirector-Scripts/archive/refs/tags/v1.0.zip)
+Download the most up to date scripts here: [Download Now](https://github.com/SkelXton/VHS-Redirector-Scripts/archive/refs/tags/v1.0.zip)
 
 
 
