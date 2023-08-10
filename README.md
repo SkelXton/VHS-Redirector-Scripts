@@ -3,16 +3,11 @@ _Scripts and GUIs to automate VHS Alternative Server. Needs Admin Privileges to 
 
 Download the most up to date scripts here: [Download Now](https://github.com/SkelXton/VHS-Redirector-Scripts/archive/refs/tags/v1.0.zip)
 
-
-
 **VHS Server Coordinator GUI:**
-------------------------------
-A GUI interface to modify the hosts file quickly and efficiently when switching server settings. 
-This was compiled from Python using PyInstaller.
+-------------------------------
+A GUI interface to modify the hosts file quickly and efficiently when switching server settings. Select Host to run the server locally, and Client to select a given input address. 
 
 ![Screenshot from 2023-08-10 11-34-29](https://github.com/SkelXton/VHS-Redirector-Scripts/assets/57548041/2faf28e5-f705-4486-8e18-09c8994862b4)
-
-Select Host to run the server locally, and Client to select a given input address. 
 
 **Installer/Uninstaller for VHS Redirector:**
 -------------------------------
@@ -21,4 +16,4 @@ The install script must be run in the same directory as the certificate in order
 
 **Requirements for VHS Server Coordinator GUI:**
 -------------------------------
-The GUI was built on python 3.10.10, using the tkinter 8.6.12 and pillow 9.5.0 packages.
+The GUI was built on python 3.10.10, using the tkinter 8.6.12 and pillow 9.5.0 packages, and compiled into an executable using PyInstaller.
