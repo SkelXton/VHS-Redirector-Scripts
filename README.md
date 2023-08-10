@@ -1,7 +1,5 @@
 # VHS-Redirector-Scripts
-Scripts and GUIs to automate VHS Alternative Server. 
-
-*_Needs Admin Privileges to run All scripts._*
+_Scripts and GUIs to automate VHS Alternative Server. Needs Admin Privileges to run All scripts._
 
 Download the most up to date scripts here: ![]()
 
