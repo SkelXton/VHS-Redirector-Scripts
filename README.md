@@ -14,5 +14,5 @@ Select Host to run the server locally, and Client to select a given input addres
 
 **Installer/Uninstaller for VHS Redirector:**
 -------------------------------
-Included are .bat scripts which will install and uninstall the certificate as needed automatically. 
+Included are .bat scripts which will install and uninstall the certificate as needed automatically. In addition, the install script also sets up the hosts file to run a server locally on the system.
 The install script must be run in the same directory as the certificate in order to work.
