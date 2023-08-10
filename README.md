@@ -16,3 +16,7 @@ Select Host to run the server locally, and Client to select a given input addres
 -------------------------------
 Included are .bat scripts which will install and uninstall the certificate as needed automatically. In addition, the install script also sets up the hosts file to run a server locally on the system.
 The install script must be run in the same directory as the certificate in order to work.
+
+**Requirements for VHS Server Coordinator GUI:**
+-------------------------------
+The GUI was built on python 3.10.10, using the tkinter 8.6.12 and pillow 9.5.0 packages.
