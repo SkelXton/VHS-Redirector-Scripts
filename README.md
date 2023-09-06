@@ -5,7 +5,7 @@ Download the most up to date scripts here: [Download Now](https://github.com/Ske
 
 **VHS Server Coordinator GUI:**
 -------------------------------
-A GUI interface to modify the hosts file quickly and efficiently when switching server settings. Select Host to run the server locally, and Client to select a given input address. 
+A GUI interface to modify the hosts file quickly and efficiently when switching server settings. Select Main to launch from the main private server, Self-Host to connect to a server on the local network, and Remote Server to connect to a IP address you provide.
 
 ![Example GUI](https://github.com/SkelXton/VHS-Redirector-Scripts/assets/57548041/96478f3e-1c4b-48bc-a95b-fda5e5fcca94)
 
