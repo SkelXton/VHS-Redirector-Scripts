@@ -110,6 +110,7 @@ def read_last_ip_address():
         return ""
 
 if __name__ == "__main__":
+    WORKING_DIR = os.path.dirname(os.path.abspath(__file__))
     root = tk.Tk()
     root.title("VHS Server Coordinator")
 
@@ -122,7 +123,7 @@ if __name__ == "__main__":
     y_coordinate = (screen_height - window_height) // 2  
     root.geometry(f"{window_width}x{window_height}+{x_coordinate}+{y_coordinate}")
 
-    # Prevent window resizing
+    # Prevent window resizings
     root.resizable(False, False)
 
     # Frame to contain all the widgets except the image
@@ -131,10 +132,12 @@ if __name__ == "__main__":
 
     # Load the banner image
     try:
-        banner_photo = ImageTk.PhotoImage(Image.open("banner.png"))
+        img_path = os.path.join(WORKING_DIR, "banner.png")
+        banner_photo = ImageTk.PhotoImage(Image.open(img_path))
         img_label = tk.Label(content_frame, image=banner_photo)
         img_label.grid(row=0, column=0, columnspan=2, padx=5, pady=5, sticky="nsew")  # Place the image at the top right
     except Exception as e:
+        print("Exception: ", e)
         print("Issues printing banner, so skipped...")
         pass
 
