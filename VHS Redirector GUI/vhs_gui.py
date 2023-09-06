@@ -2,6 +2,10 @@ import os
 import tkinter as tk
 from tkinter import messagebox
 from PIL import Image, ImageTk
+import subprocess
+
+MAIN_IP = ""
+CERTIFICATE_SERIAL = "7121d851d63039bd"
 
 def on_radio_selected():
     if selected_option.get() == "Client":
@@ -12,16 +16,45 @@ def on_radio_selected():
 def on_enter_key(event):
     launch_script()
 
+def check_certificate():
+    global CERTIFICATE_SERIAL
+    # Check if the certificate is installed in the Trusted Root store
+    try:
+        certutil_output = subprocess.check_output(["certutil", "-verifystore", "Root"], stderr=subprocess.STDOUT, text=True)
+        if CERTIFICATE_SERIAL in certutil_output:
+            print("Certificate is already installed.")
+            return True
+        print("Certificate is not installed.")
+        return False
+    except Exception as e:
+        print("Error checking/installing certificate:", str(e))
+        return False
+        
+    return True
+
+def install_certificate():
+    try:
+        install_script = os.getcwd() + "install_VHS_Redirect.bat"
+        subprocess.run([install_script], shell=True)
+        messagebox.showinfo("Success", "Certificate installed successfully. You can now proceed.")
+    except Exception as e:
+        messagebox.showerror("Error", f"Error installing the certificate: {str(e)}")
+
 def launch_script():
+    global MAIN_IP
     try:
         hostsfile_path = os.path.join(os.environ['windir'], 'System32', 'drivers', 'etc', 'hosts')
     except Exception as e:
-        print("This is not a Windows enviornment. Testing with a local file \"hosts.txt\"")
+        print("This is not a Windows environment. Testing with a local file \"hosts.txt\"")
         hostsfile_path = "hosts.txt"
     ip_address = "127.0.0.1" # Set to localhost by default
 
     if selected_option.get() == "Host":
         print("Hello, World! - Host")
+    
+    elif selected_option.get() == "Main":
+        ip_address = MAIN_IP # Set to the main server
+        print("Hello, World! - Main")
 
     elif selected_option.get() == "Client":
         client_input = client_entry.get()
@@ -30,12 +63,21 @@ def launch_script():
             return
         else:
             ip_address = client_input
-            # Write ip address input to cache file
+            # Write IP address input to the cache file
             with open("ipcache.txt", "w") as file:
-                lines = file.write(ip_address)
+                file.write(ip_address)
             print(f"Hello, World! - Client: {ip_address}")
     
-    try:
+    if not check_certificate():
+        # Ask the user if they want to install the certificate
+        response = messagebox.askquestion("Certificate Not Installed", "The required certificate is not installed. Do you want to install it now?")
+        if response == "yes":
+            install_certificate()
+            return
+        else:
+            return
+    
+    try:        
         with open(hostsfile_path, 'r') as file:
             lines = file.readlines()
         # Filter out lines containing "api.vhsgame.com"
@@ -92,11 +134,12 @@ if __name__ == "__main__":
         pass
 
     # Shared variable for the radio buttons
-    selected_option = tk.StringVar(value="Host")
+    selected_option = tk.StringVar(value="Main")
 
-    # Radio buttons for "Host" and "Client"
-    host_radio = tk.Radiobutton(content_frame, text="Host", variable=selected_option, value="Host", command=on_radio_selected)
-    client_radio = tk.Radiobutton(content_frame, text="Client", variable=selected_option, value="Client", command=on_radio_selected)
+    # Radio buttons for "Main", "Host", and "Client"
+    main_radio = tk.Radiobutton(content_frame, text="Main Server", variable=selected_option, value="Main", command=on_radio_selected)
+    host_radio = tk.Radiobutton(content_frame, text="Self-Host", variable=selected_option, value="Host", command=on_radio_selected)
+    client_radio = tk.Radiobutton(content_frame, text="Remote Server", variable=selected_option, value="Client", command=on_radio_selected)
 
     # Label and text entry widget for the client
     client_label = tk.Label(content_frame, text="IP Address:")
@@ -111,11 +154,14 @@ if __name__ == "__main__":
     launch_button = tk.Button(content_frame, text="Launch", command=launch_script)
 
     # Pack widgets inside the content frame
-    host_radio.grid(row=1, column=0, padx=5, pady=5, sticky="w")
-    client_radio.grid(row=2, column=0, padx=5, pady=5, sticky="w")
-    client_label.grid(row=3, column=0, padx=5, pady=5, sticky="e")  # Align label to the right (east)
-    client_entry.grid(row=3, column=1, padx=5, pady=5, sticky="w")  # Align entry to the left (west)
-    launch_button.grid(row=4, column=0, padx=5, pady=10, columnspan=2)
+    main_radio.grid(row=1, column=0, padx=5, pady=5, sticky="w")
+    host_radio.grid(row=2, column=0, padx=5, pady=5, sticky="w")
+    client_radio.grid(row=3, column=0, padx=5, pady=5, sticky="w")
+    client_label.grid(row=4, column=0, padx=5, pady=5, sticky="e")  # Align label to the right (east)
+    client_entry.grid(row=4, column=1, padx=5, pady=5, sticky="w")  # Align entry to the left (west
+    launch_button.grid(row=5, column=0, padx=5, pady=10, columnspan=2)
 
     root.bind("<Return>", on_enter_key)
     root.mainloop()
+    
+    
