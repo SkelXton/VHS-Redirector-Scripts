@@ -4,7 +4,7 @@ from tkinter import messagebox
 from PIL import Image, ImageTk
 import subprocess
 
-MAIN_IP = ""
+MAIN_IP = "173.249.51.206"
 CERTIFICATE_SERIAL = "7121d851d63039bd"
 
 def on_radio_selected():
