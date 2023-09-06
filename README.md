@@ -7,7 +7,8 @@ Download the most up to date scripts here: [Download Now](https://github.com/Ske
 -------------------------------
 A GUI interface to modify the hosts file quickly and efficiently when switching server settings. Select Host to run the server locally, and Client to select a given input address. 
 
-![Screenshot from 2023-08-10 11-34-29](https://github.com/SkelXton/VHS-Redirector-Scripts/assets/57548041/2faf28e5-f705-4486-8e18-09c8994862b4)
+![Example GUI]((https://github.com/SkelXton/VHS-Redirector-Scripts/assets/57548041/96478f3e-1c4b-48bc-a95b-fda5e5fcca94)
+
 
 **Installer/Uninstaller for VHS Redirector:**
 -------------------------------
