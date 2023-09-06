@@ -44,5 +44,4 @@ echo.
 
 echo New hosts entries added successfully.
 echo.
-pause
 
