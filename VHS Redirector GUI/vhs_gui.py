@@ -39,9 +39,11 @@ def install_certificate():
         messagebox.showinfo("Success", "Certificate installed successfully. You can now proceed.")
     except Exception as e:
         messagebox.showerror("Error", f"Error installing the certificate: {str(e)}")
+        root.destroy()
 
 def launch_script():
     global MAIN_IP
+    is_error_free = True
     try:
         hostsfile_path = os.path.join(os.environ['windir'], 'System32', 'drivers', 'etc', 'hosts')
     except Exception as e:
@@ -73,7 +75,6 @@ def launch_script():
         response = messagebox.askquestion("Certificate Not Installed", "The required certificate is not installed. Do you want to install it now?")
         if response == "yes":
             install_certificate()
-            return
         else:
             return
     
@@ -92,8 +93,12 @@ def launch_script():
         print("Hosts file updated successfully.")
 
     except Exception as e:
-        print("An error occurred:", str(e))
-            
+        messagebox.showinfo("An error occurred:", str(e))
+        is_error_free = False
+
+    if is_error_free:
+        messagebox.showinfo("Success", "Server set successfully!")
+
     root.destroy()
 
 def read_last_ip_address():
@@ -117,7 +122,7 @@ if __name__ == "__main__":
     y_coordinate = (screen_height - window_height) // 2  
     root.geometry(f"{window_width}x{window_height}+{x_coordinate}+{y_coordinate}")
 
-    # Prevent window resizings
+    # Prevent window resizing
     root.resizable(False, False)
 
     # Frame to contain all the widgets except the image
@@ -151,7 +156,7 @@ if __name__ == "__main__":
     client_entry.config(state=tk.DISABLED)
 
     # Launch button
-    launch_button = tk.Button(content_frame, text="Launch", command=launch_script)
+    launch_button = tk.Button(content_frame, text="Set Server", command=launch_script)
 
     # Pack widgets inside the content frame
     main_radio.grid(row=1, column=0, padx=5, pady=5, sticky="w")
