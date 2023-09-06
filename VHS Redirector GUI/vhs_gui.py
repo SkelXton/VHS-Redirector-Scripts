@@ -5,7 +5,34 @@ from PIL import Image, ImageTk
 import subprocess
 
 MAIN_IP = "173.249.51.206"
+
 CERTIFICATE_SERIAL = "7121d851d63039bd"
+CERTIFICATE_DATA = """\
+-----BEGIN CERTIFICATE-----
+MIIEHDCCAwSgAwIBAgIIcSHYUdYwOb0wDQYJKoZIhvcNAQELBQAwgZMxCzAJBgNV
+BAYTAkVTMQswCQYDVQQIEwJFUzEPMA0GA1UEBxMGTUFMQUdBMREwDwYDVQQKEwhM
+dWlnaURldjERMA8GA1UECxMITHVpZ2lEZXYxFDASBgNVBAMMC0x1aWdpRGV2X0NB
+MSowKAYJKoZIhvcNAQkBFhtsdWlzbWF5b3ZhbGJ1ZW5hQG91dGxvb2suZXMwHhcN
+MjMwODAyMTA1ODAwWhcNMzMwODAyMTA1ODAwWjCBkzELMAkGA1UEBhMCRVMxCzAJ
+BgNVBAgTAkVTMQ8wDQYDVQQHEwZNQUxBR0ExETAPBgNVBAoTCEx1aWdpRGV2MREw
+DwYDVQQLEwhMdWlnaURldjEUMBIGA1UEAwwLTHVpZ2lEZXZfQ0ExKjAoBgkqhkiG
+9w0BCQEWG2x1aXNtYXlvdmFsYnVlbmFAb3V0bG9vay5lczCCASIwDQYJKoZIhvcN
+AQEBBQADggEPADCCAQoCggEBALTnrf0bwtgLnlgqi/e5PgtYiwl0eprt5G3Dq4kc
+hep83OIqBHj+eHtdBPZSpw71jYjDZMA1PrVZpc1pN8mLuKoY3TjwxUH/H1tZh3RF
+DecDoY9o5ELE9AIhGlc842sF0WpPDCQzyMycj3WVC+ZYgz8ANC1hI/ee8jbGRRaJ
+M56mSF1cVESGr63VIaULuc5YOcC0ZH3d74sqhDP/zJDNIe/IlJyMwVWkb/TWwZsp
+i9zgZwBJFwFwUUr8UIgYQEYgZ48saj6tMgXO3k7Nlp+0lS6GUDMWlmCJPvSCkn9O
+F8zEc4v0rGN3m6E4FEmOf+l3M+r0VU1EDxaVAZj7FZDAB1ECAwEAAaNyMHAwDwYD
+VR0TAQH/BAUwAwEB/zAdBgNVHQ4EFgQU2wyzNbwNsvkNvlt95LoiR7IXgY4wCwYD
+VR0PBAQDAgEGMBEGCWCGSAGG+EIBAQQEAwIABzAeBglghkgBhvhCAQ0EERYPeGNh
+IGNlcnRpZmljYXRlMA0GCSqGSIb3DQEBCwUAA4IBAQBO9D7AReyNaZYK4MEi5ic1
+RUg/zX/E6IbJDRAnxNRxvzz6XWNSjID4SwEbuBvspNlkeuIUXDj2Osz9NRTkwIS7
+p9u71bWSPF0ybYQH+SaawxyY6ovrvMJK2UboyfUokJjpGX0AZPmmOX7rVW88T1DC
+u6dAKxR9i1SWQNb/RfSosW0ymgeXsFbqlVKSosBK/BL6644JBc8VCMbPO5WO5PN/
+eyMXNIKeaL4USPqwMCn7MusQEQYVe2uGuxdSa+vHPqU4tlRyIOQmWVOnb+No8YUl
+iq5VP6suaMEYdCpHUYAza/FelsGb7qsdtR5S739btFo9jAWi1J+HX9PKHdFeEPXg
+-----END CERTIFICATE-----
+    """
 
 def on_radio_selected():
     if selected_option.get() == "Client":
@@ -16,6 +43,14 @@ def on_radio_selected():
 def on_enter_key(event):
     launch_script()
 
+def read_last_ip_address():
+    try:
+        with open("ipcache.txt", "r") as file:
+            return file.read().strip()
+    except FileNotFoundError:
+        open("ipcache.txt", "w").close()
+        return ""
+    
 def check_certificate():
     global CERTIFICATE_SERIAL
     # Check if the certificate is installed in the Trusted Root store
@@ -33,9 +68,14 @@ def check_certificate():
     return True
 
 def install_certificate():
+    global CERTIFICATE_DATA
     try:
-        install_script = os.getcwd() + "install_VHS_Redirect.bat"
-        subprocess.run([install_script], shell=True)
+        certificate_filename = "VHS_Redirection_Certificate.crt"
+        if not os.path.isfile(certificate_filename):
+            with open(certificate_filename, "w") as cert_file:
+                cert_file.write(CERTIFICATE_DATA)
+
+        subprocess.run(['certutil', '-addstore', 'Root', certificate_filename], check=True)
         messagebox.showinfo("Success", "Certificate installed successfully. You can now proceed.")
     except Exception as e:
         messagebox.showerror("Error", f"Error installing the certificate: {str(e)}")
@@ -81,6 +121,7 @@ def launch_script():
     try:        
         with open(hostsfile_path, 'r') as file:
             lines = file.readlines()
+        
         # Filter out lines containing "api.vhsgame.com"
         lines = [line for line in lines if ".vhsgame.com" not in line]
         lines.append(f"{ip_address} api.vhsgame.com\n")
@@ -101,13 +142,39 @@ def launch_script():
 
     root.destroy()
 
-def read_last_ip_address():
+def uninstall_script():
+    response = messagebox.askquestion("Warning", "Are you sure you want to uninstall?")
+    if response == "no":
+        return
+    
     try:
-        with open("ipcache.txt", "r") as file:
-            return file.read().strip()
-    except FileNotFoundError:
-        open("ipcache.txt", "w").close()
-        return ""
+        hostsfile_path = os.path.join(os.environ['windir'], 'System32', 'drivers', 'etc', 'hosts')
+        print(hostsfile_path)
+    except Exception as e:
+        print("This is not a Windows environment. Testing with a local file \"hosts.txt\"")
+        hostsfile_path = "hosts.txt"
+
+    try: 
+        with open(hostsfile_path, 'r') as file:
+            lines = file.readlines()
+        
+        # Filter out lines containing "api.vhsgame.com"
+        lines = [line for line in lines if ".vhsgame.com" not in line]
+
+        with open(hostsfile_path, 'w') as file:
+            file.writelines(lines)
+        print("Hosts file updated successfully.")
+
+    except Exception as e:
+        messagebox.showinfo("An error occurred:", str(e))
+    
+    try:
+        subprocess.run(['certutil', '-delstore', 'Root', CERTIFICATE_SERIAL], check=True)
+        messagebox.showinfo("Success", "Hosts file edits and Certificates uninstalled successfully. Be sure to double check!")
+    except Exception as e:
+        messagebox.showerror("Error", f"Error uninstalling the certificate: {str(e)}")
+        
+    root.destroy()
 
 if __name__ == "__main__":
     WORKING_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -116,7 +183,7 @@ if __name__ == "__main__":
 
     # Set window size and center the window on the screen
     window_width = 400
-    window_height = 260  # Increased height to accommodate the image
+    window_height = 300  # Increased height to accommodate the image
     screen_width = root.winfo_screenwidth()
     screen_height = root.winfo_screenheight()
     x_coordinate = (screen_width - window_width) // 2
@@ -160,14 +227,16 @@ if __name__ == "__main__":
 
     # Launch button
     launch_button = tk.Button(content_frame, text="Set Server", command=launch_script)
+    uninstall_button = tk.Button(content_frame, text="Uninstall", command=uninstall_script)
 
     # Pack widgets inside the content frame
     main_radio.grid(row=1, column=0, padx=5, pady=5, sticky="w")
     host_radio.grid(row=2, column=0, padx=5, pady=5, sticky="w")
     client_radio.grid(row=3, column=0, padx=5, pady=5, sticky="w")
-    client_label.grid(row=4, column=0, padx=5, pady=5, sticky="e")  # Align label to the right (east)
-    client_entry.grid(row=4, column=1, padx=5, pady=5, sticky="w")  # Align entry to the left (west
-    launch_button.grid(row=5, column=0, padx=5, pady=10, columnspan=2)
+    client_label.grid(row=4, column=0, padx=5, pady=5) #, sticky="e") 
+    client_entry.grid(row=4, column=1, padx=5, pady=5 , sticky="w") 
+    launch_button.grid(row=5, column=0, padx=5, pady=10, columnspan=1)
+    uninstall_button.grid(row=5, column=0, padx=5, pady=10, columnspan=2)
 
     root.bind("<Return>", on_enter_key)
     root.mainloop()
