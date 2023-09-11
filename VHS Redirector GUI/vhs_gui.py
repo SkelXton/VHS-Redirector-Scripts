@@ -44,12 +44,13 @@ def on_enter_key(event):
     launch_script()
 
 def read_last_ip_address():
-    try:
-        with open("ipcache.txt", "r") as file:
-            return file.read().strip()
-    except FileNotFoundError:
-        open("ipcache.txt", "w").close()
-        return ""
+    pass
+    # try:
+    #     with open("ipcache.txt", "r") as file:
+    #         return file.read().strip()
+    # except FileNotFoundError:
+    #     open("ipcache.txt", "w").close()
+    #     return ""
     
 def check_certificate():
     global CERTIFICATE_SERIAL
@@ -77,6 +78,10 @@ def install_certificate():
 
         subprocess.run(['certutil', '-addstore', 'Root', certificate_filename], check=True)
         messagebox.showinfo("Success", "Certificate installed successfully. You can now proceed.")
+        # Remove the certificate once installed successfully
+        if os.path.exists(certificate_filename):
+            os.remove(certificate_filename)
+
     except Exception as e:
         messagebox.showerror("Error", f"Error installing the certificate: {str(e)}")
         root.destroy()
@@ -140,6 +145,7 @@ def launch_script():
     if is_error_free:
         messagebox.showinfo("Success", "Server set successfully!")
 
+
     root.destroy()
 
 def uninstall_script():
@@ -180,10 +186,11 @@ if __name__ == "__main__":
     WORKING_DIR = os.path.dirname(os.path.abspath(__file__))
     root = tk.Tk()
     root.title("VHS Server Coordinator")
+    global WIDTH, HEIGHT
 
     # Set window size and center the window on the screen
-    window_width = 400
-    window_height = 300  # Increased height to accommodate the image
+    window_width = 220 
+    window_height = 200
     screen_width = root.winfo_screenwidth()
     screen_height = root.winfo_screenheight()
     x_coordinate = (screen_width - window_width) // 2
@@ -202,7 +209,7 @@ if __name__ == "__main__":
         img_path = os.path.join(WORKING_DIR, "banner.png")
         banner_photo = ImageTk.PhotoImage(Image.open(img_path))
         img_label = tk.Label(content_frame, image=banner_photo)
-        img_label.grid(row=0, column=0, columnspan=2, padx=5, pady=5, sticky="nsew")  # Place the image at the top right
+        img_label.grid(row=0, column=0, columnspan=2, padx=5, pady=5, sticky="nsew")
     except Exception as e:
         print("Exception: ", e)
         print("Issues printing banner, so skipped...")
@@ -221,22 +228,25 @@ if __name__ == "__main__":
     client_entry = tk.Entry(content_frame, width=30, fg="black")
 
     # Read the last known IP Address and display it in the entry field
-    last_ip_address = read_last_ip_address()
-    client_entry.insert(0, last_ip_address)
-    client_entry.config(state=tk.DISABLED)
+    # last_ip_address = read_last_ip_address()
+    # client_entry.insert(0, last_ip_address)
+    # client_entry.config(state=tk.DISABLED)
 
     # Launch button
     launch_button = tk.Button(content_frame, text="Set Server", command=launch_script)
     uninstall_button = tk.Button(content_frame, text="Uninstall", command=uninstall_script)
 
     # Pack widgets inside the content frame
-    main_radio.grid(row=1, column=0, padx=5, pady=5, sticky="w")
-    host_radio.grid(row=2, column=0, padx=5, pady=5, sticky="w")
-    client_radio.grid(row=3, column=0, padx=5, pady=5, sticky="w")
-    client_label.grid(row=4, column=0, padx=5, pady=5) #, sticky="e") 
-    client_entry.grid(row=4, column=1, padx=5, pady=5 , sticky="w") 
-    launch_button.grid(row=5, column=0, padx=5, pady=10, columnspan=1)
-    uninstall_button.grid(row=5, column=0, padx=5, pady=10, columnspan=2)
+    # Commenting this out as this functionality is incomplete and needs to be addressed
+
+    # main_radio.grid(row=1, column=0, padx=5, pady=5, sticky="w")
+    # host_radio.grid(row=2, column=0, padx=5, pady=5, sticky="w")
+    # client_radio.grid(row=3, column=0, padx=5, pady=5, sticky="w")
+    # client_label.grid(row=4, column=0, padx=5, pady=5) #, sticky="e") 
+    # client_entry.grid(row=4, column=1, padx=5, pady=5 , sticky="w") 
+
+    launch_button.grid(row=3, column=0, padx=5, pady=10, columnspan=1)
+    uninstall_button.grid(row=3, column=1, padx=5, pady=10, columnspan=1)
 
     root.bind("<Return>", on_enter_key)
     root.mainloop()
