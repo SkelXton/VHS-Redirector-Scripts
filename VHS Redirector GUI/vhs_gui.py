@@ -1,8 +1,11 @@
 import os
 import tkinter as tk
-from tkinter import messagebox
+from tkinter import messagebox, filedialog
 from PIL import Image, ImageTk
 import subprocess
+from cryptography import x509
+from cryptography.hazmat.backends import default_backend
+from certgen import genCert
 
 MAIN_IP = "173.249.51.206"
 
@@ -44,13 +47,12 @@ def on_enter_key(event):
     launch_script()
 
 def read_last_ip_address():
-    pass
-    # try:
-    #     with open("ipcache.txt", "r") as file:
-    #         return file.read().strip()
-    # except FileNotFoundError:
-    #     open("ipcache.txt", "w").close()
-    #     return ""
+    try:
+        with open("ipcache.txt", "r") as file:
+            return file.read().strip()
+    except FileNotFoundError:
+        open("ipcache.txt", "w").close()
+        return ""
     
 def check_certificate():
     global CERTIFICATE_SERIAL
@@ -86,6 +88,34 @@ def install_certificate():
         messagebox.showerror("Error", f"Error installing the certificate: {str(e)}")
         root.destroy()
 
+def open_file_dialog():
+    root = tk.Tk()
+    root.withdraw()  # Hide the main window
+
+    file_path = filedialog.askopenfilename(
+        title="Select a .crt File",
+        filetypes=[("Certificate Files", "*.crt"), ("All Files", "*.*")]
+    )
+    
+    if not file_path:
+        messagebox.showwarning("Warning", "Please select a .crt file.")
+        return
+
+    return file_path
+
+def extract_certificate_info(cert_path):
+    try:
+        with open(cert_path, "rb") as cert_file:
+            cert_data = cert_file.read()
+        
+        certificate = x509.load_pem_x509_certificate(cert_data, default_backend())
+        serial_number = certificate.serial_number
+        
+        return serial_number, cert_data
+    except Exception as e:
+        messagebox.showerror("Error", f"Error extracting certificate info: {str(e)}")
+        return None, None
+
 def launch_script():
     global MAIN_IP
     is_error_free = True
@@ -94,14 +124,34 @@ def launch_script():
     except Exception as e:
         print("This is not a Windows environment. Testing with a local file \"hosts.txt\"")
         hostsfile_path = "hosts.txt"
-    ip_address = "127.0.0.1" # Set to localhost by default
+    ip_address = "127.0.0.1"  # Set to localhost by default
 
     if selected_option.get() == "Host":
         print("Hello, World! - Host")
+        private_key_path, certificate_path = genCert()
+
+        # Display information in a dialog box
+        messagebox.showinfo(
+            "Certificate Information",
+            f"Private Key Path: {private_key_path}\n"
+            f"Certificate Path: {certificate_path}\n\n"
+            "Please make sure to keep the private key secure and do not share it with anyone (Best practice, store it on an offline storage device).\n"
+            "The certificate should be distributed to users who wish to connect to your server."
+        )
+        # TODO Run the server executable...
+        
     
     elif selected_option.get() == "Main":
         ip_address = MAIN_IP # Set to the main server
         print("Hello, World! - Main")
+
+        if not check_certificate():
+            # Ask the user if they want to install the certificate
+            response = messagebox.askquestion("Certificate Not Installed", "The required certificate is not installed. Do you want to install it now?")
+            if response == "yes":
+                install_certificate()
+            else:
+                return
 
     elif selected_option.get() == "Client":
         client_input = client_entry.get()
@@ -114,14 +164,30 @@ def launch_script():
             with open("ipcache.txt", "w") as file:
                 file.write(ip_address)
             print(f"Hello, World! - Client: {ip_address}")
-    
-    if not check_certificate():
-        # Ask the user if they want to install the certificate
-        response = messagebox.askquestion("Certificate Not Installed", "The required certificate is not installed. Do you want to install it now?")
-        if response == "yes":
-            install_certificate()
-        else:
-            return
+
+            message = "Please locate the .crt file that you want to use for the client."
+            messagebox.showinfo("Client Certificate Selection", message)
+            client_input = open_file_dialog()  # Use the selected .crt file as the client input
+            if not client_input:
+                return  # User canceled the file selection
+            
+            CERTIFICATE_SERIAL, CERTIFICATE_DATA = extract_certificate_info(client_input)
+            
+            print("Serial Number: ", CERTIFICATE_SERIAL)
+            print("\nCertificate Data: ", CERTIFICATE_DATA)
+
+            if CERTIFICATE_SERIAL and CERTIFICATE_DATA:
+                messagebox.showinfo("Success", "Certificate information extracted successfully. You can now proceed.")
+            else:
+                return           
+            
+            if not check_certificate():
+                # Ask the user if they want to install the certificate
+                response = messagebox.askquestion("Certificate Not Installed", "The required certificate is not installed. Do you want to install it now?")
+                if response == "yes":
+                    install_certificate()
+                else:
+                    return
     
     try:        
         with open(hostsfile_path, 'r') as file:
@@ -144,7 +210,6 @@ def launch_script():
 
     if is_error_free:
         messagebox.showinfo("Success", "Server set successfully!")
-
 
     root.destroy()
 
@@ -186,11 +251,10 @@ if __name__ == "__main__":
     WORKING_DIR = os.path.dirname(os.path.abspath(__file__))
     root = tk.Tk()
     root.title("VHS Server Coordinator")
-    global WIDTH, HEIGHT
 
     # Set window size and center the window on the screen
-    window_width = 220 
-    window_height = 200
+    window_width = 420 
+    window_height = 300
     screen_width = root.winfo_screenwidth()
     screen_height = root.winfo_screenheight()
     x_coordinate = (screen_width - window_width) // 2
@@ -228,25 +292,23 @@ if __name__ == "__main__":
     client_entry = tk.Entry(content_frame, width=30, fg="black")
 
     # Read the last known IP Address and display it in the entry field
-    # last_ip_address = read_last_ip_address()
-    # client_entry.insert(0, last_ip_address)
-    # client_entry.config(state=tk.DISABLED)
+    last_ip_address = read_last_ip_address()
+    client_entry.insert(0, last_ip_address)
+    client_entry.config(state=tk.DISABLED)
 
     # Launch button
     launch_button = tk.Button(content_frame, text="Set Server", command=launch_script)
     uninstall_button = tk.Button(content_frame, text="Uninstall", command=uninstall_script)
 
     # Pack widgets inside the content frame
-    # Commenting this out as this functionality is incomplete and needs to be addressed
+    main_radio.grid(row=1, column=0, padx=5, pady=5, sticky="w")
+    host_radio.grid(row=2, column=0, padx=5, pady=5, sticky="w")
+    client_radio.grid(row=3, column=0, padx=5, pady=5, sticky="w")
+    client_label.grid(row=4, column=0, padx=5, pady=5) #, sticky="e") 
+    client_entry.grid(row=4, column=1, padx=5, pady=5 , sticky="w") 
 
-    # main_radio.grid(row=1, column=0, padx=5, pady=5, sticky="w")
-    # host_radio.grid(row=2, column=0, padx=5, pady=5, sticky="w")
-    # client_radio.grid(row=3, column=0, padx=5, pady=5, sticky="w")
-    # client_label.grid(row=4, column=0, padx=5, pady=5) #, sticky="e") 
-    # client_entry.grid(row=4, column=1, padx=5, pady=5 , sticky="w") 
-
-    launch_button.grid(row=3, column=0, padx=5, pady=10, columnspan=1)
-    uninstall_button.grid(row=3, column=1, padx=5, pady=10, columnspan=1)
+    launch_button.grid(row=5, column=0, padx=5, pady=10, columnspan=1)
+    uninstall_button.grid(row=5, column=1, padx=5, pady=10, columnspan=1)
 
     root.bind("<Return>", on_enter_key)
     root.mainloop()
