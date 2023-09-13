@@ -1,4 +1,5 @@
 import os
+import sys
 import tkinter as tk
 from tkinter import messagebox, filedialog
 from PIL import Image, ImageTk
@@ -124,6 +125,7 @@ def launch_script():
     except Exception as e:
         print("This is not a Windows environment. Testing with a local file \"hosts.txt\"")
         hostsfile_path = "hosts.txt"
+
     ip_address = "127.0.0.1"  # Set to localhost by default
 
     if selected_option.get() == "Host":
@@ -138,8 +140,19 @@ def launch_script():
             "Please make sure to keep the private key secure and do not share it with anyone (Best practice, store it on an offline storage device).\n"
             "The certificate should be distributed to users who wish to connect to your server."
         )
-        # TODO Run the server executable...
-        
+        # Run the Server Executable
+        try:
+            if sys.platform == "win32":
+                # Windows-specific code
+                subprocess.run("vhs-server-win.exe", shell=True)
+            elif sys.platform == "linux" or sys.platform == "linux2":
+                # Linux-specific code
+                subprocess.run("./vhs-server-linux", shell=True)
+            else:
+                print("Unsupported platform")
+        except Exception as e:
+            messagebox.showinfo("An error occurred:", str(e))
+            is_error_free = False
     
     elif selected_option.get() == "Main":
         ip_address = MAIN_IP # Set to the main server
