@@ -1,0 +1,3 @@
+[submodule "vhs-alternative-server"]
+	path = vhs-alternative-server
+	url = https://github.com/LuisMayo/vhs-alternative-server.git
