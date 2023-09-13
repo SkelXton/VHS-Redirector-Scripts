@@ -52,8 +52,8 @@ def genCert():
     )
     
     # Save the private key and certificate to the directory
-    private_key_path = "VHS_certificate_private_key.pem"
-    certificate_path = "VHS_certificate.crt"
+    private_key_path = "vhsgame.com.pem"
+    certificate_path = "vhsgame.com.crt"
     with open(private_key_path, "wb") as private_key_file:
         private_key_file.write(private_key.private_bytes(
             encoding=Encoding.PEM,
