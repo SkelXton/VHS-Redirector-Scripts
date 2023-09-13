@@ -173,10 +173,21 @@ def launch_script():
             
             CERTIFICATE_SERIAL, CERTIFICATE_DATA = extract_certificate_info(client_input)
             
+            print("Serial Number: ", CERTIFICATE_SERIAL)
+            print("\nCertificate Data: ", CERTIFICATE_DATA)
+
             if CERTIFICATE_SERIAL and CERTIFICATE_DATA:
                 messagebox.showinfo("Success", "Certificate information extracted successfully. You can now proceed.")
             else:
                 return           
+            
+            if not check_certificate():
+                # Ask the user if they want to install the certificate
+                response = messagebox.askquestion("Certificate Not Installed", "The required certificate is not installed. Do you want to install it now?")
+                if response == "yes":
+                    install_certificate()
+                else:
+                    return
     
     try:        
         with open(hostsfile_path, 'r') as file:
