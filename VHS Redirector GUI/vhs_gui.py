@@ -38,6 +38,11 @@ iq5VP6suaMEYdCpHUYAza/FelsGb7qsdtR5S739btFo9jAWi1J+HX9PKHdFeEPXg
 -----END CERTIFICATE-----
     """
 
+# This is definitely bad practice, but Python was
+# having some trouble reading a separate file for some reason.
+# This is just a temporary solution :).
+SAFETY_SCRIPT = "Although the risk of using this server is infintessimally small (>0.01%), we know that safety online is a top priority.\n\nIn an effort to make people both feel and be safer while using the server, we've compiled important tips for folks to know about, alongside official recommendations:\n\n1. Uninstall the server as soon as you log off.\n2. Play only with people you know and trust.\n3. Raise any security concerns with the developers of this tool via the Discord server.\n\nThe private server is made more secure by the private key (the server uses to confirm legitimacy via decrypting data encrypted from a public key) being stored in an offline storage medium. This means it cannot be compromised via the internet.\n\nSecurity is a top priority for us. If you have any additional concerns, feel free to raise them in the Discord!\n\n- The VHS: END team"
+
 def on_radio_selected():
     if selected_option.get() == "Client":
         client_entry.config(state=tk.NORMAL)
@@ -272,6 +277,11 @@ def uninstall_script():
         
     root.destroy()
 
+# Display the safety info.
+def safety_info_script():
+    global SAFETY_SCRIPT
+    messagebox.showinfo("Safety Tips for the Private Server", SAFETY_SCRIPT)
+
 if __name__ == "__main__":
     WORKING_DIR = os.path.dirname(os.path.abspath(__file__))
     root = tk.Tk()
@@ -323,6 +333,7 @@ if __name__ == "__main__":
 
     # Launch button
     launch_button = tk.Button(content_frame, text="Set Server", command=launch_script)
+    safety_button = tk.Button(content_frame, text="Safety", command=safety_info_script)
     uninstall_button = tk.Button(content_frame, text="Uninstall", command=uninstall_script)
 
     # Pack widgets inside the content frame
@@ -333,7 +344,8 @@ if __name__ == "__main__":
     client_entry.grid(row=4, column=1, padx=5, pady=5 , sticky="w") 
 
     launch_button.grid(row=5, column=0, padx=5, pady=10, columnspan=1)
-    uninstall_button.grid(row=5, column=1, padx=5, pady=10, columnspan=1)
+    safety_button.grid(row=5, column=1, padx=5, pady=10, columnspan=1)
+    uninstall_button.grid(row=5, column=2, padx=5, pady=10, columnspan=1)
 
     root.bind("<Return>", on_enter_key)
     root.mainloop()
