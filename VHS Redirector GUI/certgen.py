@@ -41,7 +41,7 @@ def genCert():
         x509.BasicConstraints(ca=True, path_length=None), critical=True
     ).add_extension(
         x509.NameConstraints(
-    	permitted_subtrees=[x509.DNSName("*.vhsgame.com")],
+    	permitted_subtrees=[x509.DNSName(".vhsgame.com")],
     	excluded_subtrees=None
         ), critical=False
     )
