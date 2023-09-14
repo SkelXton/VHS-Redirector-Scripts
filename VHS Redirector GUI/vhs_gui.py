@@ -41,7 +41,19 @@ iq5VP6suaMEYdCpHUYAza/FelsGb7qsdtR5S739btFo9jAWi1J+HX9PKHdFeEPXg
 # This is definitely bad practice, but Python was
 # having some trouble reading a separate file for some reason.
 # This is just a temporary solution :).
-SAFETY_SCRIPT = "Although the risk of using this server is infintessimally small (>0.01%), we know that safety online is a top priority.\n\nIn an effort to make people both feel and be safer while using the server, we've compiled important tips for folks to know about, alongside official recommendations:\n\n1. Uninstall the server as soon as you log off.\n2. Play only with people you know and trust.\n3. Raise any security concerns with the developers of this tool via the Discord server.\n\nThe private server is made more secure by the private key (the server uses to confirm legitimacy via decrypting data encrypted from a public key) being stored in an offline storage medium. This means it cannot be compromised via the internet.\n\nSecurity is a top priority for us. If you have any additional concerns, feel free to raise them in the Discord!\n\n- The VHS: END Team"
+SAFETY_SCRIPT = """Although the risk of using this server is infintessimally small (>0.01%), we know that safety online is a top priority.
+
+In an effort to make people both feel and be safer while using the server, we've compiled important tips for folks to know about, alongside official recommendations:
+
+1. Uninstall the server as soon as you log off.
+2. Play only with people you know and trust.
+3. Raise any security concerns with the developers of this tool via the Discord server.
+
+The private server is made more secure by the private key (the server uses to confirm legitimacy via decrypting data encrypted from a public key) being stored in an offline storage medium. This means it cannot be compromised via the internet.
+
+Security is a top priority for us. If you have any additional concerns, feel free to raise them in the Discord!
+
+- The VHS: END Team"""
 
 def on_radio_selected():
     if selected_option.get() == "Client":
