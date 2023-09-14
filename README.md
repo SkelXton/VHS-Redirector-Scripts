@@ -1,6 +1,15 @@
 # VHS Redirector Scripts
 _Scripts and GUIs to automate VHS Alternative Server. Needs Admin Privileges to run All scripts._
 
+**Disclaimer and Legal Notice:**
+-------------------------------
+This project, *VHS: Evil Never Dies*, is a dedicated media preservation effort for the now-sunset multiplayer game *Video Horror Society*, hereafter referred to as *VHS*. The primary objective of this project is to safeguard and preserve the legacy of *VHS* by archiving its gameplay, media, and related content for the benefit of the game's community.
+
+*VHS: Evil Never Dies* and its contributors are entirely unaffiliated with Hellbent Games Inc., the original developers of *Video Horror Society.* Our project operates independently, with the sole intention of preserving and celebrating the memories associated with *VHS*.
+
+Any references to *Video Horror Society* or related intellectual property are made for historical and archival purposes only. We acknowledge the copyrights and trademarks held by Hellbent Games Inc. and respect their creative work.
+
+No Endorsement Implied
 
 **VHS Server Coordinator GUI:**
 -------------------------------
