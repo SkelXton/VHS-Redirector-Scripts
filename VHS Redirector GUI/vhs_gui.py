@@ -119,12 +119,14 @@ def extract_certificate_info(cert_path):
 
 def launch_script():
     global MAIN_IP
+
     is_error_free = True
     try:
         hostsfile_path = os.path.join(os.environ['windir'], 'System32', 'drivers', 'etc', 'hosts')
     except Exception as e:
         print("This is not a Windows environment. Testing with a local file \"hosts.txt\"")
         hostsfile_path = "hosts.txt"
+
 
     ip_address = "127.0.0.1"  # Set to localhost by default
 
@@ -157,6 +159,16 @@ def launch_script():
     elif selected_option.get() == "Main":
         ip_address = MAIN_IP # Set to the main server
         print("Hello, World! - Main")
+
+        # Check if the main server is online by pinging it.
+        # If the ping fails, ask the user if they want to continue anyway but warn them that the server may be offline.
+        try:
+            subprocess.run(["ping", "-n", "1", "-w", "1000", MAIN_IP], check=True)
+        except Exception as e:
+            ping_response = messagebox.askquestion("Warning", f"The main server was unable to be pinged.\nThe server may be offline or your internet connection may be down.\n\nWould you like to continue anyway?")
+            
+            if ping_response == "no":
+                return
 
         if not check_certificate():
             # Ask the user if they want to install the certificate
