@@ -286,10 +286,11 @@ if __name__ == "__main__":
     WORKING_DIR = os.path.dirname(os.path.abspath(__file__))
     root = tk.Tk()
     root.title("VHS Server Coordinator")
+    root.iconbitmap(os.path.join(WORKING_DIR, r"END_ICON.ico"))
 
     # Set window size and center the window on the screen
     window_width = 420 
-    window_height = 300
+    window_height = 320
     screen_width = root.winfo_screenwidth()
     screen_height = root.winfo_screenheight()
     x_coordinate = (screen_width - window_width) // 2
@@ -308,7 +309,7 @@ if __name__ == "__main__":
         img_path = os.path.join(WORKING_DIR, "banner.png")
         banner_photo = ImageTk.PhotoImage(Image.open(img_path))
         img_label = tk.Label(content_frame, image=banner_photo)
-        img_label.grid(row=0, column=0, columnspan=2, padx=5, pady=5, sticky="nsew")
+        img_label.grid(row=0, column=0, columnspan=3, padx=5, pady=5, sticky="nsew")
     except Exception as e:
         print("Exception: ", e)
         print("Issues printing banner, so skipped...")
@@ -331,21 +332,29 @@ if __name__ == "__main__":
     client_entry.insert(0, last_ip_address)
     client_entry.config(state=tk.DISABLED)
 
+    # Button LabelFrame
+    button_frame = tk.LabelFrame(content_frame)
+    
+    # Make button_frame borderless
+    button_frame.config(borderwidth=0, highlightthickness=0)
+
     # Launch button
-    launch_button = tk.Button(content_frame, text="Set Server", command=launch_script)
-    safety_button = tk.Button(content_frame, text="Safety", command=safety_info_script)
-    uninstall_button = tk.Button(content_frame, text="Uninstall", command=uninstall_script)
+    launch_button = tk.Button(button_frame, text="Set Server", command=launch_script)
+    safety_button = tk.Button(button_frame, text="Safety Notice", command=safety_info_script)
+    uninstall_button = tk.Button(button_frame, text="Uninstall", command=uninstall_script)
+
 
     # Pack widgets inside the content frame
     main_radio.grid(row=1, column=0, padx=5, pady=5, sticky="w")
     host_radio.grid(row=2, column=0, padx=5, pady=5, sticky="w")
     client_radio.grid(row=3, column=0, padx=5, pady=5, sticky="w")
-    client_label.grid(row=4, column=0, padx=5, pady=5) #, sticky="e") 
-    client_entry.grid(row=4, column=1, padx=5, pady=5 , sticky="w") 
+    client_label.grid(row=3, column=1, padx=5, pady=5) #, sticky="e") 
+    client_entry.grid(row=3, column=2, padx=5, pady=5 , sticky="w") 
+    button_frame.grid(row=4, column=0, padx=5, pady=5, columnspan=3, sticky="nsw")
 
-    launch_button.grid(row=5, column=0, padx=5, pady=10, columnspan=1)
-    safety_button.grid(row=5, column=1, padx=5, pady=10, columnspan=1)
-    uninstall_button.grid(row=5, column=2, padx=5, pady=10, columnspan=1)
+    launch_button.grid(row=4, column=0, padx=5, pady=10, columnspan=1, sticky="w")
+    uninstall_button.grid(row=4, column=1, padx=5, pady=10, columnspan=1, sticky="s")
+    safety_button.grid(row=4, column=2, padx=5, pady=10, columnspan=1, sticky="e")
 
     root.bind("<Return>", on_enter_key)
     root.mainloop()
