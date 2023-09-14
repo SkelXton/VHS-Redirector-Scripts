@@ -22,7 +22,7 @@ def genCert():
         x509.NameAttribute(NameOID.STATE_OR_PROVINCE_NAME, "British Columbia"),
         x509.NameAttribute(NameOID.LOCALITY_NAME, "Burnaby"),
         x509.NameAttribute(NameOID.ORGANIZATION_NAME, "VHS:END Project"),
-        x509.NameAttribute(NameOID.COMMON_NAME, "example.com"),
+        x509.NameAttribute(NameOID.COMMON_NAME, "*.vhsgame.com"),
     ])
     
     builder = x509.CertificateBuilder().subject_name(
