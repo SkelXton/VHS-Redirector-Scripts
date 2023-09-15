@@ -15,7 +15,7 @@ No Endorsement Implied
 -------------------------------
 A GUI interface to modify the hosts file quickly and efficiently when switching server settings. Select Main to launch from the main private server, Self-Host to connect to a server on the local network, and Remote Server to connect to a IP address you provide.
 
-All code can be found in vhs_gui.py if you are curious about how the program works. Everything else is just a wrapper or asset.
+All code can be found in vhs_gui.py and certgen.py if you are curious about how the program works. Everything else is just a wrapper or asset.
 
 ![GUI](https://github.com/SkelXton/VHS-Redirector-Scripts/assets/57548041/41dcad5b-2ee6-40f0-a2f8-7581f9559964)
 
