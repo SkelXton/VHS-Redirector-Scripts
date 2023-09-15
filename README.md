@@ -7,7 +7,7 @@ This project, *VHS: Evil Never Dies*, is a dedicated media preservation effort f
 
 *VHS: Evil Never Dies* and its contributors are entirely unaffiliated with Hellbent Games Inc., the original developers of *Video Horror Society.* Our project operates independently, with the sole intention of preserving and celebrating the memories associated with *VHS*.
 
-Any references to *Video Horror Society* or related intellectual property are made for historical and archival purposes only. We acknowledge the copyrights and trademarks held by Hellbent Games Inc. and respect their creative work.
+Any references to *VHS* or related intellectual property are made for historical and archival purposes only. We acknowledge the copyrights and trademarks held by Hellbent Games Inc. and respect their creative work.
 
 No Endorsement Implied
 
