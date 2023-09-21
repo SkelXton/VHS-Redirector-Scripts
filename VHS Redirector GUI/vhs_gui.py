@@ -160,19 +160,21 @@ def launch_script():
             "Please make sure to keep the private key secure and do not share it with anyone (Best practice, store it on an offline storage device).\n"
             "The certificate should be distributed to users who wish to connect to your server."
         )
-        # Run the Server Executable
-        try:
-            if sys.platform == "win32":
-                # Windows-specific code
-                subprocess.run("vhs-server-win.exe", shell=True)
-            elif sys.platform == "linux" or sys.platform == "linux2":
-                # Linux-specific code
-                subprocess.run("./vhs-server-linux", shell=True)
-            else:
-                print("Unsupported platform")
-        except Exception as e:
-            messagebox.showinfo("An error occurred:", str(e))
-            is_error_free = False
+
+        # Doesn't work for the time being...
+        # # Run the Server Executable
+        # try:
+        #     if sys.platform == "win32":
+        #         # Windows-specific code
+        #         subprocess.run("vhs-server-win.exe", shell=True)
+        #     elif sys.platform == "linux" or sys.platform == "linux2":
+        #         # Linux-specific code
+        #         subprocess.run("./vhs-server-linux", shell=True)
+        #     else:
+        #         print("Unsupported platform")
+        # except Exception as e:
+        #     messagebox.showinfo("An error occurred:", str(e))
+        #     is_error_free = False
     
     elif selected_option.get() == "Main":
         ip_address = MAIN_IP # Set to the main server
