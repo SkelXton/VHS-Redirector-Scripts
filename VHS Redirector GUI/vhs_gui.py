@@ -299,8 +299,13 @@ if __name__ == "__main__":
     WORKING_DIR = os.path.dirname(os.path.abspath(__file__))
     root = tk.Tk()
     root.title("VHS Server Coordinator")
-    root.iconbitmap(os.path.join(WORKING_DIR, r"END_ICON.ico"))
-
+    try:
+        root.iconbitmap(os.path.join(WORKING_DIR, r"END_ICON.ico"))
+    except Exception as e:
+        print("Exception: ", e)
+        print("Issues using icon, so skipped...")
+        pass
+    
     # Set window size and center the window on the screen
     window_width = 420 
     window_height = 320
