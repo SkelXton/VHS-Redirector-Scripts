@@ -1,5 +1,6 @@
 import os
 import sys
+import ctypes
 import tkinter as tk
 from tkinter import messagebox, filedialog
 from PIL import Image, ImageTk
@@ -50,11 +51,29 @@ In an effort to make people both feel and be safer while using the server, we've
 2. Play only with people you know and trust.
 3. Raise any security concerns with the developers of this tool via the Discord server.
 
-The private server is made more secure by the private key (the server uses to confirm legitimacy via decrypting data encrypted from a public key) being stored in an offline storage medium. This means it cannot be compromised via the internet.
+The private server is made more secure by the private key (the server uses to confirm legitimacy via decrypting data encrypted from a public key) being stored in an offline storage medium. 
+This means it cannot be compromised via the internet.
 
 Security is a top priority for us. If you have any additional concerns, feel free to raise them in the Discord!
 
 - The VHS: END Team"""
+
+# Bad practice continued lol
+ADMIN_MESSAGE = """In order to setup the server, you will need to run this program as administrator to make the needed changes. 
+
+If you have any concerns with this program, please refer to the GitHub repo which can be found in the discord server or below.
+
+https://github.com/SkelXton/VHS-Redirector-Scripts
+"""
+
+def is_admin():
+    try:
+        return ctypes.windll.shell32.IsUserAnAdmin()
+    except:
+        return False
+
+def run_as_admin():
+    ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, " ".join(sys.argv), None, 1)
 
 def on_radio_selected():
     if selected_option.get() == "Client":
@@ -298,85 +317,90 @@ def safety_info_script():
     messagebox.showinfo("Safety Tips for the Private Server", SAFETY_SCRIPT)
 
 if __name__ == "__main__":
-    WORKING_DIR = os.path.dirname(os.path.abspath(__file__))
-    root = tk.Tk()
-    root.title("VHS Server Coordinator")
-    try:
-        root.iconbitmap(os.path.join(WORKING_DIR, r"END_ICON.ico"))
-    except Exception as e:
-        print("Exception: ", e)
-        print("Issues using icon, so skipped...")
-        pass
+    if is_admin():
+        WORKING_DIR = os.path.dirname(os.path.abspath(__file__))
+        root = tk.Tk()
+        root.title("VHS Server Coordinator")
+        try:
+            root.iconbitmap(os.path.join(WORKING_DIR, r"END_ICON.ico"))
+        except Exception as e:
+            print("Exception: ", e)
+            print("Issues using icon, so skipped...")
+            pass
+        
+        # Set window size and center the window on the screen
+        window_width = 420 
+        window_height = 320
+        screen_width = root.winfo_screenwidth()
+        screen_height = root.winfo_screenheight()
+        x_coordinate = (screen_width - window_width) // 2
+        y_coordinate = (screen_height - window_height) // 2  
+        root.geometry(f"{window_width}x{window_height}+{x_coordinate}+{y_coordinate}")
     
-    # Set window size and center the window on the screen
-    window_width = 420 
-    window_height = 320
-    screen_width = root.winfo_screenwidth()
-    screen_height = root.winfo_screenheight()
-    x_coordinate = (screen_width - window_width) // 2
-    y_coordinate = (screen_height - window_height) // 2  
-    root.geometry(f"{window_width}x{window_height}+{x_coordinate}+{y_coordinate}")
-
-    # Prevent window resizings
-    root.resizable(False, False)
-
-    # Frame to contain all the widgets except the image
-    content_frame = tk.Frame(root)
-    content_frame.pack()  # Add 30 pixels of padding to the top of the frame
-
-    # Load the banner image
-    try:
-        img_path = os.path.join(WORKING_DIR, "banner.png")
-        banner_photo = ImageTk.PhotoImage(Image.open(img_path))
-        img_label = tk.Label(content_frame, image=banner_photo)
-        img_label.grid(row=0, column=0, columnspan=3, padx=5, pady=5, sticky="nsew")
-    except Exception as e:
-        print("Exception: ", e)
-        print("Issues printing banner, so skipped...")
-        pass
-
-    # Shared variable for the radio buttons
-    selected_option = tk.StringVar(value="Main")
-
-    # Radio buttons for "Main", "Host", and "Client"
-    main_radio = tk.Radiobutton(content_frame, text="Main Server", variable=selected_option, value="Main", command=on_radio_selected)
-    host_radio = tk.Radiobutton(content_frame, text="Self-Host", variable=selected_option, value="Host", command=on_radio_selected)
-    client_radio = tk.Radiobutton(content_frame, text="Remote Server", variable=selected_option, value="Client", command=on_radio_selected)
-
-    # Label and text entry widget for the client
-    client_label = tk.Label(content_frame, text="IP Address:")
-    client_entry = tk.Entry(content_frame, width=30, fg="black")
-
-    # Read the last known IP Address and display it in the entry field
-    last_ip_address = read_last_ip_address()
-    client_entry.insert(0, last_ip_address)
-    client_entry.config(state=tk.DISABLED)
-
-    # Button LabelFrame
-    button_frame = tk.LabelFrame(content_frame)
+        # Prevent window resizings
+        root.resizable(False, False)
     
-    # Make button_frame borderless
-    button_frame.config(borderwidth=0, highlightthickness=0)
-
-    # Launch button
-    launch_button = tk.Button(button_frame, text="Set Server", command=launch_script)
-    safety_button = tk.Button(button_frame, text="Safety Notice", command=safety_info_script)
-    uninstall_button = tk.Button(button_frame, text="Uninstall", command=uninstall_script)
-
-
-    # Pack widgets inside the content frame
-    main_radio.grid(row=1, column=0, padx=5, pady=5, sticky="w")
-    host_radio.grid(row=2, column=0, padx=5, pady=5, sticky="w")
-    client_radio.grid(row=3, column=0, padx=5, pady=5, sticky="w")
-    client_label.grid(row=3, column=1, padx=5, pady=5) #, sticky="e") 
-    client_entry.grid(row=3, column=2, padx=5, pady=5 , sticky="w") 
-    button_frame.grid(row=4, column=0, padx=5, pady=5, columnspan=3, sticky="nsw")
-
-    launch_button.grid(row=4, column=0, padx=5, pady=10, columnspan=1, sticky="w")
-    uninstall_button.grid(row=4, column=1, padx=5, pady=10, columnspan=1, sticky="s")
-    safety_button.grid(row=4, column=2, padx=5, pady=10, columnspan=1, sticky="e")
-
-    root.bind("<Return>", on_enter_key)
-    root.mainloop()
+        # Frame to contain all the widgets except the image
+        content_frame = tk.Frame(root)
+        content_frame.pack()  # Add 30 pixels of padding to the top of the frame
+    
+        # Load the banner image
+        try:
+            img_path = os.path.join(WORKING_DIR, "banner.png")
+            banner_photo = ImageTk.PhotoImage(Image.open(img_path))
+            img_label = tk.Label(content_frame, image=banner_photo)
+            img_label.grid(row=0, column=0, columnspan=3, padx=5, pady=5, sticky="nsew")
+        except Exception as e:
+            print("Exception: ", e)
+            print("Issues printing banner, so skipped...")
+            pass
+    
+        # Shared variable for the radio buttons
+        selected_option = tk.StringVar(value="Main")
+    
+        # Radio buttons for "Main", "Host", and "Client"
+        main_radio = tk.Radiobutton(content_frame, text="Main Server", variable=selected_option, value="Main", command=on_radio_selected)
+        # TBA on Host once tutorial for setting up server tutorial is done
+        # host_radio = tk.Radiobutton(content_frame, text="Self-Host", variable=selected_option, value="Host", command=on_radio_selected)
+        client_radio = tk.Radiobutton(content_frame, text="Remote Server", variable=selected_option, value="Client", command=on_radio_selected)
+    
+        # Label and text entry widget for the client
+        client_label = tk.Label(content_frame, text="IP Address:")
+        client_entry = tk.Entry(content_frame, width=30, fg="black")
+    
+        # Read the last known IP Address and display it in the entry field
+        last_ip_address = read_last_ip_address()
+        client_entry.insert(0, last_ip_address)
+        client_entry.config(state=tk.DISABLED)
+    
+        # Button LabelFrame
+        button_frame = tk.LabelFrame(content_frame)
+        
+        # Make button_frame borderless
+        button_frame.config(borderwidth=0, highlightthickness=0)
+    
+        # Launch button
+        launch_button = tk.Button(button_frame, text="Set Server", command=launch_script)
+        safety_button = tk.Button(button_frame, text="Safety Notice", command=safety_info_script)
+        uninstall_button = tk.Button(button_frame, text="Uninstall", command=uninstall_script)
     
     
+        # Pack widgets inside the content frame
+        main_radio.grid(row=1, column=0, padx=5, pady=5, sticky="w")
+        # TBA on Host once tutorial for setting up server tutorial is done
+        # host_radio.grid(row=2, column=0, padx=5, pady=5, sticky="w")
+        client_radio.grid(row=3, column=0, padx=5, pady=5, sticky="w")
+        client_label.grid(row=3, column=1, padx=5, pady=5) #, sticky="e") 
+        client_entry.grid(row=3, column=2, padx=5, pady=5 , sticky="w") 
+        button_frame.grid(row=4, column=0, padx=5, pady=5, columnspan=3, sticky="nsw")
+    
+        launch_button.grid(row=4, column=0, padx=5, pady=10, columnspan=1, sticky="w")
+        uninstall_button.grid(row=4, column=1, padx=5, pady=10, columnspan=1, sticky="s")
+        safety_button.grid(row=4, column=2, padx=5, pady=10, columnspan=1, sticky="e")
+    
+        root.bind("<Return>", on_enter_key)
+        root.mainloop()
+    else:
+        ctypes.windll.user32.MessageBoxW(0, ADMIN_MESSAGE, "Admin Privileges Required", 0x30)
+        run_as_admin()
+
