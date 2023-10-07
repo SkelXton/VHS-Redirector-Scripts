@@ -22,7 +22,7 @@ All code can be found in vhs_gui.py and certgen.py if you are curious about how 
 
 **How to Install VHS Server Redirector:**
 -------------------------------
-Download the most up-to-date release here: [Download Now](https://github.com/SkelXton/VHS-Redirector-Scripts/releases/download/initial_release/VHS_Server_Coordinator.exe)
+Download the most up-to-date release here: [Download Now](https://github.com/SkelXton/VHS-Redirector-Scripts/releases/latest)
 
 Functionality is built into the app, but if you want to build from source, you can do so using this command within autopy-to-exe or pyinstaller through the terminal:
 ```
